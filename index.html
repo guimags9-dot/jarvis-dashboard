@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard Jarvis - Inteligência de Ecossistema</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+
+    <style>
+        /* ── Reset & Base ───────────────────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg-page: #F4F3EF;
+            --bg-card: #FFFFFF;
+            --bg-surface: #F0EFE9;
+            --bg-input: #F0EFE9;
+            --border: rgba(0,0,0,0.08);
+            --border-md: rgba(0,0,0,0.14);
+            --text-1: #1A1916;
+            --text-2: #6B6A65;
+            --text-3: #A09F9B;
+            --green: #1D9E75;
+            --green-bg: #E1F5EE;
+            --green-txt: #0F6E56;
+            --red: #E24B4A;
+            --red-bg: #FCEBEB;
+            --red-txt: #A32D2D;
+            --amber: #EF9F27;
+            --amber-bg: #FAEEDA;
+            --amber-txt: #854F0B;
+            --blue: #378ADD;
+            --blue-bg: #E6F1FB;
+            --blue-txt: #185FA5;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-page: #131312;
+                --bg-card: #1E1D1B;
+                --bg-surface: #252420;
+                --bg-input: #252420;
+                --border: rgba(255,255,255,0.07);
+                --border-md: rgba(255,255,255,0.14);
+                --text-1: #F0EFE9;
+                --text-2: #8E8D88;
+                --text-3: #5A5955;
+                --green-bg: rgba(29,158,117,0.15);
+                --green-txt: #5DCAA5;
+                --red-bg: rgba(226,75,74,0.15);
+                --red-txt: #F09595;
+                --amber-bg: rgba(239,159,39,0.15);
+                --amber-txt: #FAC775;
+                --blue-bg: rgba(55,138,221,0.15);
+                --blue-txt: #85B7EB;
+                --shadow: 0 1px 4px rgba(0,0,0,0.3);
+            }
+        }
+
+        html, body {
+            min-height: 100%;
+            background: var(--bg-page);
+            color: var(--text-1);
+            font-family: 'Sora', sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .wrap { max-width: 1200px; margin: 0 auto; padding: 24px 20px 48px; }
+
+        /* ── Topbar ──────────────────────────────────────────────────── */
+        .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+        .greeting { font-size: 22px; font-weight: 500; }
+        .dateline { font-size: 11px; color: var(--text-2); font-family: 'DM Mono', monospace; margin-top: 2px; }
+        .status-pill { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--green-txt); background: var(--green-bg); padding: 5px 14px; border-radius: 20px; }
+        .pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+        /* ── Grid system ─────────────────────────────────────────────── */
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px; }
+        .grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px; }
+        @media (max-width: 900px) { .grid-3 { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 600px) { .grid-3 { grid-template-columns: 1fr; } .grid-2-1 { grid-template-columns: 1fr; } }
+
+        /* ── Card ────────────────────────────────────────────────────── */
+        .card { background: var(--bg-card); border: 0.5px solid var(--border); border-radius: var(--radius-md); padding: 18px; box-shadow: var(--shadow); position: relative; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+        .card-title { font-size: 10px; font-weight: 500; color: var(--text-2); text-transform: uppercase; letter-spacing: .09em; }
+        .badge { font-size: 10px; padding: 2px 9px; border-radius: 20px; font-family: 'DM Mono', monospace; }
+        .badge-green { background: var(--green-bg); color: var(--green-txt); }
+        .badge-blue { background: var(--blue-bg); color: var(--blue-txt); }
+        .badge-amber { background: var(--amber-bg); color: var(--amber-txt); }
+
+        /* ── Consensus Score ─────────────────────────────────────────── */
+        .consensus-box { text-align: center; margin-top: 10px; }
+        .consensus-val { font-size: 42px; font-weight: 600; font-family: 'DM Mono', monospace; }
+        .consensus-label { font-size: 10px; color: var(--text-3); text-transform: uppercase; margin-top: -5px; }
+
+        /* ── Assets ──────────────────────────────────────────────────── */
+        .asset-row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 0.5px solid var(--border); }
+        .asset-row:last-of-type { border-bottom: none; }
+        .asset-name { font-size: 13px; font-weight: 500; }
+        .asset-sub { font-size: 11px; color: var(--text-2); font-family: 'DM Mono', monospace; }
+        .asset-val { font-size: 13px; font-weight: 500; font-family: 'DM Mono', monospace; text-align: right; }
+        .asset-chg { font-size: 11px; font-family: 'DM Mono', monospace; text-align: right; }
+        .up { color: var(--green); }
+        .down { color: var(--red); }
+
+        /* ── Predictions ─────────────────────────────────────────────── */
+        .pred-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 0.5px solid var(--border); }
+        .pred-label { font-size: 12px; flex: 1; }
+        .pred-track { flex: 1; height: 5px; background: var(--bg-surface); border-radius: 3px; overflow: hidden; }
+        .pred-fill { height: 100%; transition: width 0.5s ease; }
+        .pred-pct { font-size: 12px; font-weight: 500; font-family: 'DM Mono', monospace; width: 35px; text-align: right; }
+
+        /* ── Terminal ────────────────────────────────────────────────── */
+        .terminal { background: #1A1916; border-radius: var(--radius-sm); padding: 15px; color: #00FF41; font-family: 'DM Mono', monospace; font-size: 12px; min-height: 250px; overflow-y: auto; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
+        .terminal-line { margin-bottom: 6px; border-left: 2px solid #378ADD; padding-left: 10px; }
+        
+        /* ── News ────────────────────────────────────────────────────── */
+        .news-item { padding: 12px 0; border-bottom: 0.5px solid var(--border); }
+        .news-headline { font-size: 13px; font-weight: 500; margin-bottom: 4px; line-height: 1.4; }
+        .news-meta { font-size: 10px; color: var(--text-3); font-family: 'DM Mono', monospace; }
+
+        footer { margin-top: 32px; text-align: center; font-size: 11px; color: var(--text-3); font-family: 'DM Mono', monospace; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <div class="topbar">
+        <div>
+            <div class="greeting" id="greeting">Dashboard Jarvis 👋</div>
+            <div class="dateline" id="dateline">...</div>
+        </div>
+        <div class="status-pill"><span class="pulse"></span> Sistema Autônomo Ativo</div>
+    </div>
+
+    <div class="grid-3">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Nota de Consenso</span>
+                <span class="badge badge-amber">IA Jury</span>
+            </div>
+            <div class="consensus-box">
+                <div class="consensus-val" id="consensus-score">--</div>
+                <div class="consensus-label">Confiança Global</div>
+            </div>
+            <div style="margin-top: 20px; font-size: 11px; color: var(--text-2); text-align: center; font-style: italic;" id="consensus-text">
+                Sincronizando dados dos agentes...
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Ativos Críticos</span>
+                <span class="badge badge-green">Real-time</span>
+            </div>
+            <div id="assets-list"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Probabilidades (Oráculo)</span>
+                <span class="badge badge-blue">Polymarket</span>
+            </div>
+            <div id="predictions-list"></div>
+        </div>
+    </div>
+
+    <div class="grid-2-1">
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Terminal de Inteligência (Relatórios 4h)</span>
+            </div>
+            <div class="terminal" id="terminal-output"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">Alpha News Feed</span>
+            </div>
+            <div id="news-feed"></div>
+        </div>
+    </div>
+</div>
+
+<footer>PAINEL JARVIS v2.1 · OPENCLAW ECOSYSTEM · DATA DRIVEN</footer>
+
+<script>
+    async function loadData() {
+        try {
+            // Tenta carregar o arquivo data.json gerado pelos agentes
+            const response = await fetch('data.json');
+            const data = await response.json();
+            updateUI(data);
+        } catch (e) {
+            console.log("Aguardando data.json inicial...");
+        }
+    }
+
+    function updateUI(data) {
+        // Update Consensus
+        document.getElementById('consensus-score').textContent = data.score || "--";
+        document.getElementById('consensus-text').textContent = data.verdict || "Aguardando veredito...";
+
+        // Update Assets
+        const assetList = document.getElementById('assets-list');
+        assetList.innerHTML = (data.assets || []).map(a => `
+            <div class="asset-row">
+                <div><div class="asset-name">${a.name}</div><div class="asset-sub">${a.sub}</div></div>
+                <div><div class="asset-val">${a.val}</div><div class="asset-chg ${a.up ? 'up' : 'down'}">${a.up ? '▲' : '▼'} ${a.chg}</div></div>
+            </div>
+        `).join('');
+
+        // Update Predictions
+        const predList = document.getElementById('predictions-list');
+        predList.innerHTML = (data.predictions || []).map(p => `
+            <div class="pred-row">
+                <div class="pred-label">${p.label}</div>
+                <div class="pred-track"><div class="pred-fill" style="width:${p.pct}%;background:${p.color}"></div></div>
+                <div class="pred-pct">${p.pct}%</div>
+            </div>
+        `).join('');
+
+        // Update News
+        const newsFeed = document.getElementById('news-feed');
+        newsFeed.innerHTML = (data.news || []).map(n => `
+            <div class="news-item">
+                <div class="news-headline">${n.headline}</div>
+                <div class="news-meta">${n.meta}</div>
+            </div>
+        `).join('');
+
+        // Update Terminal
+        const terminal = document.getElementById('terminal-output');
+        terminal.innerHTML = (data.terminal || []).map(line => `
+            <div class="terminal-line">${line}</div>
+        `).join('');
+    }
+
+    function updateTime() {
+        const now = new Date();
+        document.getElementById('dateline').textContent = now.toLocaleString('pt-BR').toUpperCase() + ' BRT';
+    }
+
+    // Polling de 30 segundos para checar novos dados
+    setInterval(loadData, 30000);
+    setInterval(updateTime, 1000);
+    
+    updateTime();
+    loadData();
+</script>
+</body>
+</html>
