@@ -1,20 +1,53 @@
 {
-  "timestamp": "2026-03-31T04:22:00Z",
-  "reportTitle": "Relatório Preditivo 4H - Fluxo Oráculo",
-  "btcPrice": "$67.6k",
-  "btcChange": "+1.44%",
-  "newsSummary": "Tensão geopolítica (EUA no Oriente Médio - Operação Epic Fury) vs. Otimismo regulatório (Proposta DOL para 401k).",
-  "onChainSummary": "Liquidez bid-side forte em $66k; alvo de alívio em $71k.",
-  "traderSummary": "Suporte em $65.9k, Resistência em $68.3k.",
-  "oraculoPolymarket": {
-    "chanceOfUp": "54%",
-    "deltaProbability": "+24%"
-  },
-  "feedbackLoop": {
-    "scoreAssertividade": "72%",
-    "previousScore": "68%",
-    "notes": "Tese de queda anterior confirmada pelo preço."
-  },
-  "notaConsenso": "6.5/10",
-  "nextScan": "08:22 AM America/Sao_Paulo"
+    "score": "88",
+    "verdict": "Tendência de Alta Confirmada (Consenso 4h)",
+    "assets": [
+        {
+            "name": "Bitcoin",
+            "sub": "BTC/USDT",
+            "val": "$68,450",
+            "chg": "1.2%",
+            "up": true
+        },
+        {
+            "name": "Ethereum",
+            "sub": "ETH/USDT",
+            "val": "$3,420",
+            "chg": "0.8%",
+            "up": true
+        },
+        {
+            "name": "Solana",
+            "sub": "SOL/USDT",
+            "val": "$185.40",
+            "chg": "2.4%",
+            "up": false
+        }
+    ],
+    "predictions": [
+        {
+            "label": "BTC > 70k (Abril)",
+            "pct": 72,
+            "color": "#16b364"
+        },
+        {
+            "label": "ETH ETF Approval",
+            "pct": 45,
+            "color": "#e78a00"
+        }
+    ],
+    "news": [
+        {
+            "headline": "MicroStrategy compra mais 12k BTC",
+            "meta": "Baleia · 2h atrás"
+        },
+        {
+            "headline": "Fed sinaliza manutenção de juros",
+            "meta": "Macro · 4h atrás"
+        }
+    ],
+    "terminal": [
+        "[22:21:12] OnChain: Movimentação massiva detectada.",
+        "[22:21:12] Trader: RSI em zona de neutralidade."
+    ]
 }
